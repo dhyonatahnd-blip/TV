@@ -85,8 +85,12 @@ function generateChordProgressionWav(
     samples[i] = (pad * chordEnv + arp) * masterIn * masterOut;
   }
 
-  const blob = encodeWav(samples, sampleRate);
-  return URL.createObjectURL(blob);
+  try {
+    const blob = encodeWav(samples, sampleRate);
+    return URL.createObjectURL(blob);
+  } catch {
+    return '';
+  }
 }
 
 export function createBuiltInStudioTracks(): MusicTrack[] {

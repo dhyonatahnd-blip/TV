@@ -16,15 +16,19 @@ export default defineConfig(() => {
       {
         name: 'copy-unbundled-src-assets',
         apply: 'build',
+        configResolved(config) {
+          (this as unknown as { _outDir?: string })._outDir = config.build.outDir;
+        },
         closeBundle(error?: Error): void {
           if (error) {
             return;
           }
-          const distDir = path.resolve(__dirname, 'dist');
+          const outDirName = (this as unknown as { _outDir?: string })._outDir || 'dist';
+          const outDir = path.resolve(__dirname, outDirName);
           const srcAssets = path.resolve(__dirname, 'src/assets');
-          const distAssets = path.resolve(distDir, 'src/assets');
-          if (fs.existsSync(distDir) && fs.existsSync(srcAssets)) {
-            fs.cpSync(srcAssets, distAssets, {recursive: true, force: true});
+          const destAssets = path.resolve(outDir, 'src/assets');
+          if (fs.existsSync(outDir) && fs.existsSync(srcAssets)) {
+            fs.cpSync(srcAssets, destAssets, {recursive: true, force: true});
           }
         },
       },
