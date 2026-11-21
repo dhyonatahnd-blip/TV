@@ -3,6 +3,8 @@ import { createRoot } from 'react-dom/client';
 import App from './App.tsx';
 import './index.css';
 
+(window as unknown as { __KONKORD_APP_LOADED__?: boolean }).__KONKORD_APP_LOADED__ = true;
+
 class TvErrorBoundary extends React.Component<
   { children: React.ReactNode },
   { hasError: boolean; message: string }

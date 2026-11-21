@@ -4,26 +4,47 @@ import fs from 'fs';
 import path from 'path';
 import {defineConfig} from 'vite';
 
-export default defineConfig(() => {
+export default defineConfig(({mode}) => {
+  const isDocs = mode === 'docs';
+
   return {
     base: './',
+    build: isDocs
+      ? {
+          outDir: 'docs',
+          emptyOutDir: true,
+          rollupOptions: {
+            output: {
+              entryFileNames: 'assets/konkord-tv.js',
+              chunkFileNames: 'assets/[name].js',
+              assetFileNames: (assetInfo) => {
+                const fileName = assetInfo.names?.[0] ?? assetInfo.name ?? '';
+                if (fileName.endsWith('.css')) {
+                  return 'assets/konkord-tv.css';
+                }
+                return 'assets/[name]-[hash][extname]';
+              },
+            },
+          },
+        }
+      : undefined,
     plugins: [
       react(),
       tailwindcss(),
-      // Copies src/assets into dist/ so root-relative URLs like
+      // Copies src/assets into dist/ (or docs/) so root-relative URLs like
       // "/src/assets/images/..." (e.g. generate_image output) still resolve
       // in production builds. Do not remove.
       {
         name: 'copy-unbundled-src-assets',
         apply: 'build',
         configResolved(config) {
-          (this as unknown as { _outDir?: string })._outDir = config.build.outDir;
+          (this as unknown as {_outDir?: string})._outDir = config.build.outDir;
         },
         closeBundle(error?: Error): void {
           if (error) {
             return;
           }
-          const outDirName = (this as unknown as { _outDir?: string })._outDir || 'dist';
+          const outDirName = (this as unknown as {_outDir?: string})._outDir || 'dist';
           const outDir = path.resolve(__dirname, outDirName);
           const srcAssets = path.resolve(__dirname, 'src/assets');
           const destAssets = path.resolve(outDir, 'src/assets');
