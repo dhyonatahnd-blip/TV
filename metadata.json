@@ -1,0 +1,6 @@
+{
+  "name": "KONKORD TV",
+  "description": "Sistema completo de Smart TV cinematográfico desenvolvido para televisões virtuais no Second Life, com central de música, vídeos, navegador e integração Konkord.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

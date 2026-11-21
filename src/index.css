@@ -1,0 +1,261 @@
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --tv-font-display: 'Outfit', sans-serif;
+  --tv-font-body: 'Manrope', sans-serif;
+  --tv-font-mono: 'JetBrains Mono', monospace;
+
+  --tv-bg: #f4f5f7;
+  --tv-surface: rgba(255, 255, 255, 0.86);
+  --tv-surface-solid: #ffffff;
+  --tv-surface-elevated: rgba(241, 244, 249, 0.92);
+  --tv-border: rgba(15, 23, 42, 0.1);
+  --tv-text: #0f172a;
+  --tv-text-muted: #475569;
+  --tv-accent: #2563eb;
+  --tv-accent-secondary: #4f46e5;
+  --tv-accent-glow: rgba(37, 99, 235, 0.22);
+}
+
+.dark,
+[data-theme="obsidian"] {
+  --tv-bg: #07090e;
+  --tv-surface: rgba(16, 20, 30, 0.78);
+  --tv-surface-solid: #10141e;
+  --tv-surface-elevated: rgba(24, 30, 44, 0.88);
+  --tv-border: rgba(255, 255, 255, 0.09);
+  --tv-text: #f8fafc;
+  --tv-text-muted: #94a3b8;
+  --tv-accent: #3b82f6;
+  --tv-accent-secondary: #6366f1;
+  --tv-accent-glow: rgba(59, 130, 246, 0.28);
+}
+
+[data-theme="violet"] {
+  --tv-bg: #08070e;
+  --tv-surface: rgba(20, 16, 34, 0.78);
+  --tv-surface-solid: #141022;
+  --tv-surface-elevated: rgba(30, 24, 48, 0.88);
+  --tv-border: rgba(255, 255, 255, 0.1);
+  --tv-text: #f8fafc;
+  --tv-text-muted: #a1a1aa;
+  --tv-accent: #8b5cf6;
+  --tv-accent-secondary: #3b82f6;
+  --tv-accent-glow: rgba(139, 92, 246, 0.3);
+}
+
+[data-theme="graphite"] {
+  --tv-bg: #0b0c0e;
+  --tv-surface: rgba(22, 24, 29, 0.82);
+  --tv-surface-solid: #16181d;
+  --tv-surface-elevated: rgba(33, 36, 43, 0.9);
+  --tv-border: rgba(255, 255, 255, 0.08);
+  --tv-text: #f4f4f5;
+  --tv-text-muted: #a1a1aa;
+  --tv-accent: #38bdf8;
+  --tv-accent-secondary: #0284c7;
+  --tv-accent-glow: rgba(56, 189, 248, 0.24);
+}
+
+[data-theme="light"] {
+  --tv-bg: #eef1f6;
+  --tv-surface: rgba(255, 255, 255, 0.88);
+  --tv-surface-solid: #ffffff;
+  --tv-surface-elevated: rgba(241, 245, 249, 0.95);
+  --tv-border: rgba(15, 23, 42, 0.1);
+  --tv-text: #0f172a;
+  --tv-text-muted: #475569;
+  --tv-accent: #2563eb;
+  --tv-accent-secondary: #7c3aed;
+  --tv-accent-glow: rgba(37, 99, 235, 0.2);
+}
+
+html,
+body,
+#root {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: var(--tv-bg);
+  color: var(--tv-text);
+  font-family: var(--tv-font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.font-display {
+  font-family: var(--tv-font-display);
+}
+
+.font-mono-tabular {
+  font-family: var(--tv-font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Subtle custom scrollbars for internal TV panels */
+.tv-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: var(--tv-border) transparent;
+}
+.tv-scroll::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+.tv-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.tv-scroll::-webkit-scrollbar-thumb {
+  background: var(--tv-border);
+  border-radius: 9999px;
+}
+
+/* Hide scrollbar for horizontal nav strips while preserving scrollability */
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* TV Screen Fade & Scale Entrance */
+@keyframes tvScreenEnter {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.992);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.tv-screen-enter {
+  animation: tvScreenEnter 220ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Cinema Mode Transitions */
+.tv-cinema-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  background: radial-gradient(
+    ellipse 70% 60% at 50% 50%,
+    rgba(6, 8, 15, 0.88) 0%,
+    rgba(2, 3, 6, 0.97) 70%,
+    #010204 100%
+  );
+  backdrop-filter: blur(10px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 420ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.tv-cinema-backdrop.is-active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.tv-cinema-peripheral {
+  transition:
+    opacity 380ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 420ms cubic-bezier(0.16, 1, 0.3, 1),
+    filter 420ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.tv-cinema-active .tv-cinema-peripheral {
+  opacity: 0.06;
+  transform: scale(0.985);
+  filter: blur(3px);
+  pointer-events: none;
+}
+
+.tv-cinema-stage {
+  transition:
+    transform 450ms cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 450ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.tv-cinema-active .tv-cinema-stage {
+  position: relative;
+  z-index: 40;
+  transform: scale(1.012);
+  box-shadow:
+    0 28px 90px rgba(0, 0, 0, 0.92),
+    0 0 70px var(--tv-accent-glow);
+}
+
+/* Subtle Hero Ken Burns Motion */
+@keyframes tvHeroDrift {
+  0% {
+    transform: scale(1) translate3d(0, 0, 0);
+  }
+  50% {
+    transform: scale(1.045) translate3d(-0.6%, -0.4%, 0);
+  }
+  100% {
+    transform: scale(1) translate3d(0, 0, 0);
+  }
+}
+
+.tv-hero-drift {
+  animation: tvHeroDrift 24s ease-in-out infinite;
+  will-change: transform;
+}
+
+/* Real Audio Equalizer Bars (only active while playing) */
+@keyframes eqBarBounce {
+  0%, 100% {
+    transform: scaleY(0.24);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+
+.tv-eq-bar {
+  transform-origin: bottom;
+  animation: eqBarBounce 780ms ease-in-out infinite;
+}
+
+/* Skeleton Shimmer */
+@keyframes tvShimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.tv-shimmer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+  animation: tvShimmer 1.5s infinite;
+}
+
+/* Focus ring tailored for TV / Keyboard navigation */
+.tv-focus:focus-visible {
+  outline: 2px solid var(--tv-accent);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 5px var(--tv-accent-glow);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tv-screen-enter,
+  .tv-hero-drift,
+  .tv-eq-bar,
+  .tv-shimmer::after {
+    animation: none !important;
+  }
+  .tv-cinema-backdrop,
+  .tv-cinema-peripheral,
+  .tv-cinema-stage {
+    transition: none !important;
+  }
+}
