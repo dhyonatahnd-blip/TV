@@ -21,6 +21,10 @@ export default function App() {
 
   const t = getTranslations(settings.language);
 
+  useEffect(() => {
+    (window as unknown as { __KONKORD_MOUNTED_UI__?: boolean }).__KONKORD_MOUNTED_UI__ = true;
+  }, []);
+
   // Sync theme and document lang attribute with documentElement
   useEffect(() => {
     const root = document.documentElement;

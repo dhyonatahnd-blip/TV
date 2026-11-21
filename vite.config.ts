@@ -4,8 +4,8 @@ import fs from 'fs';
 import path from 'path';
 import {defineConfig} from 'vite';
 
-export default defineConfig(({mode}) => {
-  const isDocs = mode === 'docs';
+export default defineConfig(() => {
+  const isDocs = process.argv.includes('docs');
 
   return {
     base: './',
@@ -31,6 +31,17 @@ export default defineConfig(({mode}) => {
     plugins: [
       react(),
       tailwindcss(),
+      // Strip root-only uncompiled GitHub Pages fallback during Vite production builds
+      {
+        name: 'strip-root-fallback-on-build',
+        apply: 'build',
+        transformIndexHtml(html) {
+          return html.replace(
+            /<!-- ROOT_STATIC_FALLBACK_START -->[\s\S]*?<!-- ROOT_STATIC_FALLBACK_END -->/g,
+            ''
+          );
+        },
+      },
       // Copies src/assets into dist/ (or docs/) so root-relative URLs like
       // "/src/assets/images/..." (e.g. generate_image output) still resolve
       // in production builds. Do not remove.
